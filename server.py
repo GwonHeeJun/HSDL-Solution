@@ -13,7 +13,7 @@ def index():
 def gen(camera):
     print('gen')
     
-    frames = camera.get_frame()
+    '''frames = camera.get_frame()
     for frame in frames:
         #print(frame)
         #cv2.imshow("img",frame)
@@ -22,7 +22,10 @@ def gen(camera):
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
             time.sleep(0.013)   
         except:
-            continue
+            continue'''
+    while True:
+        frame=camera.get_frame()
+        yield(b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n'+frame+b'\r\n')
 
 @app.route('/video_feed')
 def video_feed():
