@@ -1,4 +1,18 @@
-type User {
-  id: ID! @id
-  name: String!
+type Transportation {
+    id : ID! @id
+    type: TransportationType
+    title: String
+    detectiveCount: Int @default(value: 0)
+}
+
+enum TransportationType {
+    Bus
+    Subway
+}
+
+type DetectivePlace {
+  id : ID! @id
+  transportation: Transportation!
+  placeName: String
+  placeCode: String
 }
