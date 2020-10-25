@@ -16,16 +16,16 @@ class Dashboard extends React.Component {
             <Aux>
                 <div className="media friendlist-box align-items-center justify-content-center m-b-20">
                     <div className="m-r-10 photo-table">
-                        <a href={DEMO.BLANK_LINK}><img className="rounded-circle" style={{width: '40px'}} src={avatar1} alt="activity-user"/></a>
+                        <a href={DEMO.BLANK_LINK}><img className="rounded-circle" style={{width: '40px'}} src={bus} alt="activity-user"/></a>
                     </div>
                     <div className="media-body">
-                        <h6 className="m-0 d-inline">Silje Larsen</h6>
-                        <span className="float-right d-flex  align-items-center"><i className="fa fa-caret-up f-22 m-r-10 text-c-green"/>3784</span>
+                        <h6 className="m-0 d-inline">503번 버스</h6>
+                        <span className="float-right d-flex  align-items-center"><i className="fa fa-caret-up f-22 m-r-10 text-c-green"/>1</span>
                     </div>
                 </div>
                 <div className="media friendlist-box align-items-center justify-content-center m-b-20">
                     <div className="m-r-10 photo-table">
-                        <a href={DEMO.BLANK_LINK}><img className="rounded-circle" style={{width: '40px'}} src={avatar2} alt="activity-user"/></a>
+                        <a href={DEMO.BLANK_LINK}><img className="rounded-circle" style={{width: '40px'}} src={subway} alt="activity-user"/></a>
                     </div>
                     <div className="media-body">
                         <h6 className="m-0 d-inline">Julie Vad</h6>
