@@ -46,6 +46,7 @@ def inference(image,
     '''
     # image = np.copy(image)
     output_info = []
+    resul=0
     height, width, _ = image.shape
     image_resized = cv2.resize(image, target_shape)
     image_np = image_resized / 255.0  # 归一化到0~1
@@ -85,11 +86,13 @@ def inference(image,
             cv2.putText(image, "%s: %.2f" % (id2class[class_id], conf), (xmin + 2, ymin - 2),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, color)
         #output_info.append([class_id, conf, xmin, ymin, xmax, ymax])
-        output_info.append([class_id, conf, xmin, ymin, xmax, ymax])
+        output_info.append(class_id)
+       
+        resul+=class_id
          
     if show_result:
         Image.fromarray(image).show()
-    return output_info
+    return resul
 
 
 def run_on_video(video_path, output_video_name, conf_thresh):
@@ -140,7 +143,10 @@ if __name__ == "__main__":
     if args.img_mode:
         imgPath = args.img_path
         img = cv2.imread(imgPath)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        try:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        except:
+            pass
         inference(img, show_result=True, target_shape=(260, 260))
     else:
         video_path = args.video_path
