@@ -7,6 +7,10 @@ module.exports = {
   count: Int!
 }
 
+type AggregateLog {
+  count: Int!
+}
+
 type AggregateTransportation {
   count: Int!
 }
@@ -137,6 +141,122 @@ input DetectivePlaceWhereUniqueInput {
   id: ID
 }
 
+type Log {
+  id: ID!
+  transportation: Transportation!
+  detectiveCount: Int
+  placeName: String
+}
+
+type LogConnection {
+  pageInfo: PageInfo!
+  edges: [LogEdge]!
+  aggregate: AggregateLog!
+}
+
+input LogCreateInput {
+  id: ID
+  transportation: TransportationCreateOneInput!
+  detectiveCount: Int
+  placeName: String
+}
+
+type LogEdge {
+  node: Log!
+  cursor: String!
+}
+
+enum LogOrderByInput {
+  id_ASC
+  id_DESC
+  detectiveCount_ASC
+  detectiveCount_DESC
+  placeName_ASC
+  placeName_DESC
+}
+
+type LogPreviousValues {
+  id: ID!
+  detectiveCount: Int
+  placeName: String
+}
+
+type LogSubscriptionPayload {
+  mutation: MutationType!
+  node: Log
+  updatedFields: [String!]
+  previousValues: LogPreviousValues
+}
+
+input LogSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: LogWhereInput
+  AND: [LogSubscriptionWhereInput!]
+  OR: [LogSubscriptionWhereInput!]
+  NOT: [LogSubscriptionWhereInput!]
+}
+
+input LogUpdateInput {
+  transportation: TransportationUpdateOneRequiredInput
+  detectiveCount: Int
+  placeName: String
+}
+
+input LogUpdateManyMutationInput {
+  detectiveCount: Int
+  placeName: String
+}
+
+input LogWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  transportation: TransportationWhereInput
+  detectiveCount: Int
+  detectiveCount_not: Int
+  detectiveCount_in: [Int!]
+  detectiveCount_not_in: [Int!]
+  detectiveCount_lt: Int
+  detectiveCount_lte: Int
+  detectiveCount_gt: Int
+  detectiveCount_gte: Int
+  placeName: String
+  placeName_not: String
+  placeName_in: [String!]
+  placeName_not_in: [String!]
+  placeName_lt: String
+  placeName_lte: String
+  placeName_gt: String
+  placeName_gte: String
+  placeName_contains: String
+  placeName_not_contains: String
+  placeName_starts_with: String
+  placeName_not_starts_with: String
+  placeName_ends_with: String
+  placeName_not_ends_with: String
+  AND: [LogWhereInput!]
+  OR: [LogWhereInput!]
+  NOT: [LogWhereInput!]
+}
+
+input LogWhereUniqueInput {
+  id: ID
+}
+
 scalar Long
 
 type Mutation {
@@ -146,6 +266,12 @@ type Mutation {
   upsertDetectivePlace(where: DetectivePlaceWhereUniqueInput!, create: DetectivePlaceCreateInput!, update: DetectivePlaceUpdateInput!): DetectivePlace!
   deleteDetectivePlace(where: DetectivePlaceWhereUniqueInput!): DetectivePlace
   deleteManyDetectivePlaces(where: DetectivePlaceWhereInput): BatchPayload!
+  createLog(data: LogCreateInput!): Log!
+  updateLog(data: LogUpdateInput!, where: LogWhereUniqueInput!): Log
+  updateManyLogs(data: LogUpdateManyMutationInput!, where: LogWhereInput): BatchPayload!
+  upsertLog(where: LogWhereUniqueInput!, create: LogCreateInput!, update: LogUpdateInput!): Log!
+  deleteLog(where: LogWhereUniqueInput!): Log
+  deleteManyLogs(where: LogWhereInput): BatchPayload!
   createTransportation(data: TransportationCreateInput!): Transportation!
   updateTransportation(data: TransportationUpdateInput!, where: TransportationWhereUniqueInput!): Transportation
   updateManyTransportations(data: TransportationUpdateManyMutationInput!, where: TransportationWhereInput): BatchPayload!
@@ -175,6 +301,9 @@ type Query {
   detectivePlace(where: DetectivePlaceWhereUniqueInput!): DetectivePlace
   detectivePlaces(where: DetectivePlaceWhereInput, orderBy: DetectivePlaceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [DetectivePlace]!
   detectivePlacesConnection(where: DetectivePlaceWhereInput, orderBy: DetectivePlaceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DetectivePlaceConnection!
+  log(where: LogWhereUniqueInput!): Log
+  logs(where: LogWhereInput, orderBy: LogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Log]!
+  logsConnection(where: LogWhereInput, orderBy: LogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LogConnection!
   transportation(where: TransportationWhereUniqueInput!): Transportation
   transportations(where: TransportationWhereInput, orderBy: TransportationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Transportation]!
   transportationsConnection(where: TransportationWhereInput, orderBy: TransportationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TransportationConnection!
@@ -183,6 +312,7 @@ type Query {
 
 type Subscription {
   detectivePlace(where: DetectivePlaceSubscriptionWhereInput): DetectivePlaceSubscriptionPayload
+  log(where: LogSubscriptionWhereInput): LogSubscriptionPayload
   transportation(where: TransportationSubscriptionWhereInput): TransportationSubscriptionPayload
 }
 

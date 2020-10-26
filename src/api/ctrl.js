@@ -26,8 +26,18 @@ export const DetectiveNonMask = async (ctx) => {
 
     const result = await prisma.updateTransportation({
       where: { id: ctx.request.body.transportId },
-      data: { detectiveCount : port.detectiveCount + 1 },
+      data: { detectiveCount : port.detectiveCount +  ctx.request.body.detectiveCount },
     });
+
+    await prisma.createLog({
+      detectiveCount: ctx.request.body.detectiveCount,
+      placeName: ctx.request.body.placeName,
+      transportation: {
+        connect : {
+          id : ctx.request.body.transportId
+        }
+      }
+    })
 
     ctx.body = result;
     ctx.status = 200;

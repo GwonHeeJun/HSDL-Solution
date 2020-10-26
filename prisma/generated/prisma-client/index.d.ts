@@ -17,6 +17,7 @@ export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
   detectivePlace: (where?: DetectivePlaceWhereInput) => Promise<boolean>;
+  log: (where?: LogWhereInput) => Promise<boolean>;
   transportation: (where?: TransportationWhereInput) => Promise<boolean>;
 }
 
@@ -60,6 +61,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => DetectivePlaceConnectionPromise;
+  log: (where: LogWhereUniqueInput) => LogNullablePromise;
+  logs: (args?: {
+    where?: LogWhereInput;
+    orderBy?: LogOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Log>;
+  logsConnection: (args?: {
+    where?: LogWhereInput;
+    orderBy?: LogOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => LogConnectionPromise;
   transportation: (
     where: TransportationWhereUniqueInput
   ) => TransportationNullablePromise;
@@ -109,6 +129,22 @@ export interface Prisma {
   deleteManyDetectivePlaces: (
     where?: DetectivePlaceWhereInput
   ) => BatchPayloadPromise;
+  createLog: (data: LogCreateInput) => LogPromise;
+  updateLog: (args: {
+    data: LogUpdateInput;
+    where: LogWhereUniqueInput;
+  }) => LogPromise;
+  updateManyLogs: (args: {
+    data: LogUpdateManyMutationInput;
+    where?: LogWhereInput;
+  }) => BatchPayloadPromise;
+  upsertLog: (args: {
+    where: LogWhereUniqueInput;
+    create: LogCreateInput;
+    update: LogUpdateInput;
+  }) => LogPromise;
+  deleteLog: (where: LogWhereUniqueInput) => LogPromise;
+  deleteManyLogs: (where?: LogWhereInput) => BatchPayloadPromise;
   createTransportation: (
     data: TransportationCreateInput
   ) => TransportationPromise;
@@ -143,6 +179,9 @@ export interface Subscription {
   detectivePlace: (
     where?: DetectivePlaceSubscriptionWhereInput
   ) => DetectivePlaceSubscriptionPayloadSubscription;
+  log: (
+    where?: LogSubscriptionWhereInput
+  ) => LogSubscriptionPayloadSubscription;
   transportation: (
     where?: TransportationSubscriptionWhereInput
   ) => TransportationSubscriptionPayloadSubscription;
@@ -165,6 +204,14 @@ export type DetectivePlaceOrderByInput =
   | "placeName_DESC"
   | "placeCode_ASC"
   | "placeCode_DESC";
+
+export type LogOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "detectiveCount_ASC"
+  | "detectiveCount_DESC"
+  | "placeName_ASC"
+  | "placeName_DESC";
 
 export type TransportationOrderByInput =
   | "id_ASC"
@@ -277,6 +324,53 @@ export interface TransportationWhereInput {
   NOT?: Maybe<TransportationWhereInput[] | TransportationWhereInput>;
 }
 
+export type LogWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface LogWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  transportation?: Maybe<TransportationWhereInput>;
+  detectiveCount?: Maybe<Int>;
+  detectiveCount_not?: Maybe<Int>;
+  detectiveCount_in?: Maybe<Int[] | Int>;
+  detectiveCount_not_in?: Maybe<Int[] | Int>;
+  detectiveCount_lt?: Maybe<Int>;
+  detectiveCount_lte?: Maybe<Int>;
+  detectiveCount_gt?: Maybe<Int>;
+  detectiveCount_gte?: Maybe<Int>;
+  placeName?: Maybe<String>;
+  placeName_not?: Maybe<String>;
+  placeName_in?: Maybe<String[] | String>;
+  placeName_not_in?: Maybe<String[] | String>;
+  placeName_lt?: Maybe<String>;
+  placeName_lte?: Maybe<String>;
+  placeName_gt?: Maybe<String>;
+  placeName_gte?: Maybe<String>;
+  placeName_contains?: Maybe<String>;
+  placeName_not_contains?: Maybe<String>;
+  placeName_starts_with?: Maybe<String>;
+  placeName_not_starts_with?: Maybe<String>;
+  placeName_ends_with?: Maybe<String>;
+  placeName_not_ends_with?: Maybe<String>;
+  AND?: Maybe<LogWhereInput[] | LogWhereInput>;
+  OR?: Maybe<LogWhereInput[] | LogWhereInput>;
+  NOT?: Maybe<LogWhereInput[] | LogWhereInput>;
+}
+
 export type TransportationWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -329,6 +423,24 @@ export interface DetectivePlaceUpdateManyMutationInput {
   placeCode?: Maybe<String>;
 }
 
+export interface LogCreateInput {
+  id?: Maybe<ID_Input>;
+  transportation: TransportationCreateOneInput;
+  detectiveCount?: Maybe<Int>;
+  placeName?: Maybe<String>;
+}
+
+export interface LogUpdateInput {
+  transportation?: Maybe<TransportationUpdateOneRequiredInput>;
+  detectiveCount?: Maybe<Int>;
+  placeName?: Maybe<String>;
+}
+
+export interface LogUpdateManyMutationInput {
+  detectiveCount?: Maybe<Int>;
+  placeName?: Maybe<String>;
+}
+
 export interface TransportationUpdateInput {
   type?: Maybe<TransportationType>;
   title?: Maybe<String>;
@@ -359,6 +471,17 @@ export interface DetectivePlaceSubscriptionWhereInput {
     | DetectivePlaceSubscriptionWhereInput[]
     | DetectivePlaceSubscriptionWhereInput
   >;
+}
+
+export interface LogSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<LogWhereInput>;
+  AND?: Maybe<LogSubscriptionWhereInput[] | LogSubscriptionWhereInput>;
+  OR?: Maybe<LogSubscriptionWhereInput[] | LogSubscriptionWhereInput>;
+  NOT?: Maybe<LogSubscriptionWhereInput[] | LogSubscriptionWhereInput>;
 }
 
 export interface TransportationSubscriptionWhereInput {
@@ -531,6 +654,89 @@ export interface AggregateDetectivePlaceSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface Log {
+  id: ID_Output;
+  detectiveCount?: Int;
+  placeName?: String;
+}
+
+export interface LogPromise extends Promise<Log>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  transportation: <T = TransportationPromise>() => T;
+  detectiveCount: () => Promise<Int>;
+  placeName: () => Promise<String>;
+}
+
+export interface LogSubscription
+  extends Promise<AsyncIterator<Log>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  transportation: <T = TransportationSubscription>() => T;
+  detectiveCount: () => Promise<AsyncIterator<Int>>;
+  placeName: () => Promise<AsyncIterator<String>>;
+}
+
+export interface LogNullablePromise extends Promise<Log | null>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  transportation: <T = TransportationPromise>() => T;
+  detectiveCount: () => Promise<Int>;
+  placeName: () => Promise<String>;
+}
+
+export interface LogConnection {
+  pageInfo: PageInfo;
+  edges: LogEdge[];
+}
+
+export interface LogConnectionPromise
+  extends Promise<LogConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<LogEdge>>() => T;
+  aggregate: <T = AggregateLogPromise>() => T;
+}
+
+export interface LogConnectionSubscription
+  extends Promise<AsyncIterator<LogConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<LogEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateLogSubscription>() => T;
+}
+
+export interface LogEdge {
+  node: Log;
+  cursor: String;
+}
+
+export interface LogEdgePromise extends Promise<LogEdge>, Fragmentable {
+  node: <T = LogPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface LogEdgeSubscription
+  extends Promise<AsyncIterator<LogEdge>>,
+    Fragmentable {
+  node: <T = LogSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateLog {
+  count: Int;
+}
+
+export interface AggregateLogPromise
+  extends Promise<AggregateLog>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateLogSubscription
+  extends Promise<AsyncIterator<AggregateLog>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface TransportationConnection {
   pageInfo: PageInfo;
   edges: TransportationEdge[];
@@ -650,6 +856,53 @@ export interface DetectivePlacePreviousValuesSubscription
   placeCode: () => Promise<AsyncIterator<String>>;
 }
 
+export interface LogSubscriptionPayload {
+  mutation: MutationType;
+  node: Log;
+  updatedFields: String[];
+  previousValues: LogPreviousValues;
+}
+
+export interface LogSubscriptionPayloadPromise
+  extends Promise<LogSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = LogPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = LogPreviousValuesPromise>() => T;
+}
+
+export interface LogSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<LogSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = LogSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = LogPreviousValuesSubscription>() => T;
+}
+
+export interface LogPreviousValues {
+  id: ID_Output;
+  detectiveCount?: Int;
+  placeName?: String;
+}
+
+export interface LogPreviousValuesPromise
+  extends Promise<LogPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  detectiveCount: () => Promise<Int>;
+  placeName: () => Promise<String>;
+}
+
+export interface LogPreviousValuesSubscription
+  extends Promise<AsyncIterator<LogPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  detectiveCount: () => Promise<AsyncIterator<Int>>;
+  placeName: () => Promise<AsyncIterator<String>>;
+}
+
 export interface TransportationSubscriptionPayload {
   mutation: MutationType;
   node: Transportation;
@@ -738,6 +991,10 @@ export const models: Model[] = [
   },
   {
     name: "DetectivePlace",
+    embedded: false
+  },
+  {
+    name: "Log",
     embedded: false
   }
 ];

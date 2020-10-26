@@ -16,3 +16,10 @@ type DetectivePlace {
   placeName: String
   placeCode: String
 }
+
+type Log {
+  id : ID! @id
+  transportation: Transportation!
+  detectiveCount: Int
+  placeName: String
+}
