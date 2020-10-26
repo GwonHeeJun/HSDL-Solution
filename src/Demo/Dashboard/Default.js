@@ -183,7 +183,7 @@ class Dashboard extends React.Component {
                       </td>
                       <td>
                         <h6 className="mb-1">503번 버스</h6>
-                        <p className="m-0">OOO 정류장</p>
+                        <p className="m-0">송정공원역 정류장</p>
                       </td>
                       <td>
                         <h6 className="text-muted">
@@ -217,7 +217,7 @@ class Dashboard extends React.Component {
                       </td>
                       <td>
                         <h6 className="mb-1">2호선 지하철</h6>
-                        <p className="m-0">OOO 역</p>
+                        <p className="m-0">송정 역</p>
                       </td>
                       <td>
                         <h6 className="text-muted">
@@ -251,7 +251,7 @@ class Dashboard extends React.Component {
                       </td>
                       <td>
                         <h6 className="mb-1">503번 버스</h6>
-                        <p className="m-0">OOO 정류장</p>
+                        <p className="m-0">시청역 정류장</p>
                       </td>
                       <td>
                         <h6 className="text-muted">
@@ -285,7 +285,7 @@ class Dashboard extends React.Component {
                       </td>
                       <td>
                         <h6 className="mb-1">2호선 지하철</h6>
-                        <p className="m-0">OOO 역</p>
+                        <p className="m-0">시청 역</p>
                       </td>
                       <td>
                         <h6 className="text-muted">
@@ -319,7 +319,7 @@ class Dashboard extends React.Component {
                       </td>
                       <td>
                         <h6 className="mb-1">503번 버스</h6>
-                        <p className="m-0">OOO 정류장</p>
+                        <p className="m-0">서울역 정류장</p>
                       </td>
                       <td>
                         <h6 className="text-muted">
