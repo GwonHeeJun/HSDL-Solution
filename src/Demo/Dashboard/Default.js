@@ -20,6 +20,10 @@ class Dashboard extends React.Component {
       totalList: [],
       busList: [],
       subwayList: [],
+      log: [],
+      allLog: [],
+      busLog: [],
+      subwayLog: [],
       totalCount: 0,
     };
   }
@@ -35,6 +39,40 @@ class Dashboard extends React.Component {
       "http://hsdlapi.ap-northeast-2.elasticbeanstalk.com/api/all/subway"
     );
 
+    const { data: logs } = await axios.post(
+      "https://us1.prisma.sh/gwonheejun-b421fb/HSDL-Solution/dev/",
+      {
+        operationName: null,
+        variables: {},
+        query:
+          "{\n  logs(last: 5) {\n    id\n    transportation {\n      title\n      type\n    }\n    placeName\n    detectiveCount\n  }\n}\n",
+      }
+    );
+
+    const { data: logsss } = await axios.post(
+      "https://us1.prisma.sh/gwonheejun-b421fb/HSDL-Solution/dev/",
+      {
+        operationName: null,
+        variables: {},
+        query:
+          "{\n  logs {\n    id\n    transportation {\n      title\n      type\n    }\n    placeName\n    detectiveCount\n  }\n}\n",
+      }
+    );
+
+    const { data: busLog } = await axios.post("https://us1.prisma.sh/gwonheejun-b421fb/HSDL-Solution/dev/", {
+      operationName: null,
+      variables: {},
+      query:
+        "{\n  logs(where: {transportation: {type: Bus}}) {\n    id\n    transportation {\n      title\n      type\n    }\n    placeName\n    detectiveCount\n  }\n}\n",
+    });
+
+    const { data: subLog } = await axios.post("https://us1.prisma.sh/gwonheejun-b421fb/HSDL-Solution/dev/", {
+      operationName: null,
+      variables: {},
+      query:
+        "{\n  logs(where: {transportation: {type: Subway}}) {\n    id\n    transportation {\n      title\n      type\n    }\n    placeName\n    detectiveCount\n  }\n}\n",
+    });
+
     bus.map((i) => result.push(i));
     subway.map((i) => result.push(i));
 
@@ -47,98 +85,135 @@ class Dashboard extends React.Component {
       busList: bus,
       subwayList: subway,
       totalCount: count,
+      busLog: busLog.data.logs,
+      log: logs.data.logs,
+      subwayLog: subLog.data.logs,
+      allLog: logsss.data.logs,
     });
 
-    console.log(result);
-    console.log(count);
   };
   render() {
-
     const tabContent = (
       <Aux>
-        <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-          <div className="m-r-10 photo-table">
-            <a href={DEMO.BLANK_LINK}>
-              <img
-                className="rounded-circle"
-                style={{ width: "40px" }}
-                src={bus}
-                alt="activity-user"
-              />
-            </a>
-          </div>
-          <div className="media-body">
-            <h6 className="m-0 d-inline">503번 버스</h6>
-            <span className="float-right d-flex  align-items-center">
-              <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />1
-            </span>
-          </div>
-        </div>
-        <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-          <div className="m-r-10 photo-table">
-            <a href={DEMO.BLANK_LINK}>
-              <img
-                className="rounded-circle"
-                style={{ width: "40px" }}
-                src={subway}
-                alt="activity-user"
-              />
-            </a>
-          </div>
-          <div className="media-body">
-            <h6 className="m-0 d-inline">2호선 지하철</h6>
-            <span className="float-right d-flex  align-items-center">
-              <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />1
-            </span>
-          </div>
-        </div>
-       </Aux>
+        {this.state.allLog.map((i, ix) => {
+          if (ix <= 5) {
+            return (
+              <div className="media friendlist-box align-items-center justify-content-center m-b-20">
+                <div className="m-r-10 photo-table">
+                  <a href={DEMO.BLANK_LINK}>
+                    <img
+                      className="rounded-circle"
+                      style={{ width: "40px" }}
+                      src={i.transportation.type === "Bus" ? bus : subway}
+                      alt="activity-user"
+                    />
+                  </a>
+                </div>
+                <div className="media-body">
+                  <h6 className="m-0 d-inline">{i.transportation.title}</h6>
+                  <span className="float-right d-flex  align-items-center">
+                    {i.detectiveCount > 0 ? (
+                      <>
+                        <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />
+                        {i.detectiveCount}
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa fa-caret-down f-22 m-r-10 text-c-red" />
+                        {i.detectiveCount.toString().replace("-", "")}
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
+            );
+          } else {
+            return false;
+          }
+        })}
+      </Aux>
     );
 
     const tabContent2 = (
       <Aux>
-        <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-          <div className="m-r-10 photo-table">
-            <a href={DEMO.BLANK_LINK}>
-              <img
-                className="rounded-circle"
-                style={{ width: "40px" }}
-                src={bus}
-                alt="activity-user"
-              />
-            </a>
-          </div>
-          <div className="media-body">
-            <h6 className="m-0 d-inline">503번 버스</h6>
-            <span className="float-right d-flex  align-items-center">
-              <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />1
-            </span>
-          </div>
-        </div>
-        </Aux>
+        {this.state.busLog.map((i, ix) => {
+          if (ix <= 5) {
+            return (
+              <div className="media friendlist-box align-items-center justify-content-center m-b-20">
+                <div className="m-r-10 photo-table">
+                  <a href={DEMO.BLANK_LINK}>
+                    <img
+                      className="rounded-circle"
+                      style={{ width: "40px" }}
+                      src={i.transportation.type === "Bus" ? bus : subway}
+                      alt="activity-user"
+                    />
+                  </a>
+                </div>
+                <div className="media-body">
+                  <h6 className="m-0 d-inline">{i.transportation.title}</h6>
+                  <span className="float-right d-flex  align-items-center">
+                    {i.detectiveCount > 0 ? (
+                      <>
+                        <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />
+                        {i.detectiveCount}
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa fa-caret-down f-22 m-r-10 text-c-red" />
+                        {i.detectiveCount.toString().replace("-", "")}
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
+            );
+          } else {
+            return false;
+          }
+        })}
+      </Aux>
     );
 
     const tabContent3 = (
       <Aux>
-        <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-          <div className="m-r-10 photo-table">
-            <a href={DEMO.BLANK_LINK}>
-              <img
-                className="rounded-circle"
-                style={{ width: "40px" }}
-                src={subway}
-                alt="activity-user"
-              />
-            </a>
-          </div>
-          <div className="media-body">
-            <h6 className="m-0 d-inline">2호선 지하철</h6>
-            <span className="float-right d-flex  align-items-center">
-              <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />1
-            </span>
-          </div>
-        </div>
-       </Aux>
+        {this.state.subwayLog.map((i, ix) => {
+          if (ix <= 5) {
+            return (
+              <div className="media friendlist-box align-items-center justify-content-center m-b-20">
+                <div className="m-r-10 photo-table">
+                  <a href={DEMO.BLANK_LINK}>
+                    <img
+                      className="rounded-circle"
+                      style={{ width: "40px" }}
+                      src={i.transportation.type === "Bus" ? bus : subway}
+                      alt="activity-user"
+                    />
+                  </a>
+                </div>
+                <div className="media-body">
+                  <h6 className="m-0 d-inline">{i.transportation.title}</h6>
+                  <span className="float-right d-flex  align-items-center">
+                    {i.detectiveCount > 0 ? (
+                      <>
+                        <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />
+                        {i.detectiveCount}
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa fa-caret-down f-22 m-r-10 text-c-red" />
+                        {i.detectiveCount.toString().replace("-", "")}
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
+            );
+          } else {
+            return false;
+          }
+        })}
+      </Aux>
     );
 
     return (
@@ -172,176 +247,45 @@ class Dashboard extends React.Component {
               <Card.Body className="px-0 py-2">
                 <Table responsive hover>
                   <tbody>
-                    <tr className="unread">
-                      <td>
-                        <img
-                          className="rounded-circle"
-                          style={{ width: "40px" }}
-                          src={bus}
-                          alt="activity-user"
-                        />
-                      </td>
-                      <td>
-                        <h6 className="mb-1">503번 버스</h6>
-                        <p className="m-0">송정공원역 정류장</p>
-                      </td>
-                      <td>
-                        <h6 className="text-muted">
-                          <i className="fa fa-circle text-c-green f-10 m-r-15" />
-                          10/24 오후 3:21
-                        </h6>
-                      </td>
-                      <td>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg2 text-white f-12"
-                        >
-                          마스크 미착용
-                        </a>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg text-white f-12"
-                        >
-                          탑승
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="unread">
-                      <td>
-                        <img
-                          className="rounded-circle"
-                          style={{ width: "40px" }}
-                          src={subway}
-                          alt="activity-user"
-                        />
-                      </td>
-                      <td>
-                        <h6 className="mb-1">2호선 지하철</h6>
-                        <p className="m-0">송정 역</p>
-                      </td>
-                      <td>
-                        <h6 className="text-muted">
-                          <i className="fa fa-circle text-c-red f-10 m-r-15" />
-                          10/24 오후 3:20
-                        </h6>
-                      </td>
-                      <td>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg2 text-white f-12"
-                        >
-                          마스크 미착용
-                        </a>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg text-white f-12"
-                        >
-                          탑승
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="unread">
-                      <td>
-                        <img
-                          className="rounded-circle"
-                          style={{ width: "40px" }}
-                          src={bus}
-                          alt="activity-user"
-                        />
-                      </td>
-                      <td>
-                        <h6 className="mb-1">503번 버스</h6>
-                        <p className="m-0">시청역 정류장</p>
-                      </td>
-                      <td>
-                        <h6 className="text-muted">
-                          <i className="fa fa-circle text-c-green f-10 m-r-15" />
-                          10/24 오후 3:21
-                        </h6>
-                      </td>
-                      <td>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg2 text-white f-12"
-                        >
-                          마스크 미착용
-                        </a>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg text-white f-12"
-                        >
-                          탑승
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="unread">
-                      <td>
-                        <img
-                          className="rounded-circle"
-                          style={{ width: "40px" }}
-                          src={subway}
-                          alt="activity-user"
-                        />
-                      </td>
-                      <td>
-                        <h6 className="mb-1">2호선 지하철</h6>
-                        <p className="m-0">시청 역</p>
-                      </td>
-                      <td>
-                        <h6 className="text-muted">
-                          <i className="fa fa-circle text-c-red f-10 m-r-15" />
-                          10/24 오후 3:20
-                        </h6>
-                      </td>
-                      <td>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg2 text-white f-12"
-                        >
-                          마스크 미착용
-                        </a>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg text-white f-12"
-                        >
-                          탑승
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="unread">
-                      <td>
-                        <img
-                          className="rounded-circle"
-                          style={{ width: "40px" }}
-                          src={bus}
-                          alt="activity-user"
-                        />
-                      </td>
-                      <td>
-                        <h6 className="mb-1">503번 버스</h6>
-                        <p className="m-0">서울역 정류장</p>
-                      </td>
-                      <td>
-                        <h6 className="text-muted">
-                          <i className="fa fa-circle text-c-green f-10 m-r-15" />
-                          10/24 오후 3:21
-                        </h6>
-                      </td>
-                      <td>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg2 text-white f-12"
-                        >
-                          마스크 미착용
-                        </a>
-                        <a
-                          href={DEMO.BLANK_LINK}
-                          className="label theme-bg text-white f-12"
-                        >
-                          탑승
-                        </a>
-                      </td>
-                    </tr>
+                    {this.state.log.map((i, ix) => (
+                      <tr className="unread">
+                        <td>
+                          <img
+                            className="rounded-circle"
+                            style={{ width: "40px" }}
+                            src={bus}
+                            alt="activity-user"
+                          />
+                        </td>
+                        <td>
+                          <h6 className="mb-1">{i.transportation.title}</h6>
+                          <p className="m-0">
+                            {i.placeName}{" "}
+                            {i.transportation.type === "Bus" ? "정류장" : "역"}
+                          </p>
+                        </td>
+                        <td>
+                          <h6 className="text-muted">
+                            <i className="fa fa-circle text-c-green f-10 m-r-15" />
+                            10/24 오후 3:1{ix + 1}
+                          </h6>
+                        </td>
+                        <td>
+                          <a
+                            href={DEMO.BLANK_LINK}
+                            className="label theme-bg2 text-white f-12"
+                          >
+                            마스크 미착용
+                          </a>
+                          <a
+                            href={DEMO.BLANK_LINK}
+                            className="label theme-bg text-white f-12"
+                          >
+                            탑승
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </Card.Body>
@@ -356,7 +300,7 @@ class Dashboard extends React.Component {
                   </div>
                   <div className="col-auto">
                     <label className="label theme-bg2 text-white f-14 f-w-400 float-right">
-                      34%
+                      10 / 27
                     </label>
                   </div>
                 </div>
@@ -415,9 +359,14 @@ class Dashboard extends React.Component {
                     <i className="fa fa-bus text-primary f-36" />
                   </div>
                   <div className="col text-right">
-                    <h3>12,281</h3>
+                    <h3>
+                      {this.state.busList.reduce(
+                        (sum, i) => sum + i.detectiveCount,
+                        0
+                      )}
+                    </h3>
                     <h5 className="text-c-green mb-0">
-                      +7.2% <span className="text-muted">금일 미착용자</span>
+                      +3.2% <span className="text-muted">금일 미착용자</span>
                     </h5>
                   </div>
                 </div>
@@ -426,7 +375,7 @@ class Dashboard extends React.Component {
                 <div className="row align-items-center justify-content-center card-active">
                   <div className="col-6">
                     <h6 className="text-center m-b-10">
-                      <span className="text-muted m-r-5">탑승자:</span>35,098
+                      <span className="text-muted m-r-5">탑승자:</span>125
                     </h6>
                     <div className="progress">
                       <div
@@ -441,7 +390,11 @@ class Dashboard extends React.Component {
                   </div>
                   <div className="col-6">
                     <h6 className="text-center  m-b-10">
-                      <span className="text-muted m-r-5">미착용자:</span>350
+                      <span className="text-muted m-r-5">미착용자:</span>
+                      {this.state.busList.reduce(
+                        (sum, i) => sum + i.detectiveCount,
+                        0
+                      )}
                     </h6>
                     <div className="progress">
                       <div
@@ -464,9 +417,14 @@ class Dashboard extends React.Component {
                     <i className="fa fa-subway text-primary f-36" />
                   </div>
                   <div className="col text-right">
-                    <h3>12,281</h3>
+                    <h3>
+                      {this.state.subwayList.reduce(
+                        (sum, i) => sum + i.detectiveCount,
+                        0
+                      )}
+                    </h3>
                     <h5 className="text-c-green mb-0">
-                      +7.2% <span className="text-muted">금일 미착용자</span>
+                      +1.2% <span className="text-muted">금일 미착용자</span>
                     </h5>
                   </div>
                 </div>
@@ -475,7 +433,7 @@ class Dashboard extends React.Component {
                 <div className="row align-items-center justify-content-center card-active">
                   <div className="col-6">
                     <h6 className="text-center m-b-10">
-                      <span className="text-muted m-r-5">탑승자:</span>35,098
+                      <span className="text-muted m-r-5">탑승자:</span>25
                     </h6>
                     <div className="progress">
                       <div
@@ -490,7 +448,11 @@ class Dashboard extends React.Component {
                   </div>
                   <div className="col-6">
                     <h6 className="text-center  m-b-10">
-                      <span className="text-muted m-r-5">미착용자:</span>350
+                      <span className="text-muted m-r-5">미착용자:</span>
+                      {this.state.subwayList.reduce(
+                        (sum, i) => sum + i.detectiveCount,
+                        0
+                      )}
                     </h6>
                     <div className="progress">
                       <div
