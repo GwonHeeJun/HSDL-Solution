@@ -1,6 +1,8 @@
 import os
 import sys
 import cv2
+import requests
+import json
 import time
 import simpleaudio as sa
 import threading
@@ -28,13 +30,22 @@ def get_key():
         if event.type == KEYDOWN:
             return event.key
 
-def thread_music(finsh):
+def thread_music(finsh,uid,place,p_code,no_mask):
     if finsh==False:
         try:
-            song = AudioSegment.from_wav("ko_tts.wav")
-            play(song)
+            #enable if needs
+            """song = AudioSegment.from_wav("ko_tts.wav")
+            play(song)"""
         except:
             pass
+    url="http://hsdlapi.ap-northeast-2.elasticbeanstalk.com/api/detecitve"
+    data={"transportId":uid,
+    "placeName":place,
+    "placeCode":p_code,
+    "detectiveCount":no_mask}
+    response=requests.post(url=url,data=json.dumps(data),headers={'Content-Type': 'application/json'})
+    dict_meta = {'status_code':response.status_code, 'ok':response.ok, 'encoding':response.encoding, 'Content-Type': response.headers['Content-Type']}
+    print({**dict_meta, **{'text':response.text}})
 
 class mask(object):
     def __init__(self):
@@ -52,7 +63,7 @@ class mask(object):
         
     def mask_detect(self):
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        conf_thresh=0.5
+        conf_thresh=0.7
         cap = cv2.VideoCapture(self.video_path)
         #cap = cv2.VideoCapture(1)
         cap.set(cv2.CAP_PROP_FPS,2)
@@ -84,9 +95,7 @@ class mask(object):
         timer_count=0
         while status:
             print(time.time()-before)
-            if time.time()-before>3:
-                x=threading.Thread(target=thread_music,args=(finsh,))
-                before=time.time()
+            
                 
             start_stamp = time.time()
             status, img_raw = cap.read()
@@ -98,35 +107,40 @@ class mask(object):
             read_frame_stamp = time.time()
             if (status):
                 result=inference(img_raw)
+                if time.time()-before>3:
+                    x=threading.Thread(target=thread_music,args=(finsh,self.id,self.place,self.p_id,int(result),))
+                    before=time.time()
                 cv2.imshow('image', img_raw[:, :, ::-1])
                 cv2.waitKey(1)
                 inference_stamp = time.time()
                 # writer.write(img_raw)
                 write_frame_stamp = time.time()
                 print(result)
-                try:
-                    if full_screen:
-                        surf = pygame.display.set_mode(window_size, HWSURFACE | FULLSCREEN | DOUBLEBUF)
-                    else:
-                        surf = pygame.display.set_mode(window_size)
+                if full_screen:
+                    surf = pygame.display.set_mode(window_size, HWSURFACE | FULLSCREEN | DOUBLEBUF)
+                else:
+                    surf = pygame.display.set_mode(window_size)
         
-                    if result> 0:
+                if result> 0:
                         
                         #here send counting datas
-                        display_box(surf, "마스크를 착용해 주시기를 바랍니다")
+                    display_box(surf, "마스크를 착용해 주시기를 바랍니다")
+                    try:
                         x.start()
-                        print(finsh)
-                        timer_count+=1
-                        print(post_data(self.id,self.place,self.p_id,result))
-                    else:
-                        display_box(surf, "이번역은 송정공원 역입니다.")
-                        timer_count=0
-                except:
+                    except:
+                        pass
+                    print(finsh)
+                    timer_count+=1
+                    #request=post_data(self.id,self.place,self.p_id,int(result))
+                    #print(request)
+                else:
+                    display_box(surf, "이번역은 송정공원 역입니다.")
+                    timer_count=0
+                                
+                if timer_count>100:
+                    #here put report function
                     pass
-                
-                if timer_count>10:
-                    #here put police
-                    print("timer_count:",timer_count)
+                print("timer_count:",timer_count)
                 print("%d of %d" % (idx, total_frames))
                 print("read_frame:%f, infer time:%f, write time:%f" % (read_frame_stamp - start_stamp,
                                                                     inference_stamp - read_frame_stamp,
