@@ -64,9 +64,9 @@ class mask(object):
     def mask_detect(self):
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         conf_thresh=0.7
-        cap = cv2.VideoCapture(self.video_path)
+        cap = cv2.VideoCapture(-1)
         #cap = cv2.VideoCapture(1)
-        cap.set(cv2.CAP_PROP_FPS,2)
+        #cap.set(cv2.CAP_PROP_FPS,2)   여기가 프레임 수 바꾸는 곳
         height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
         width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
         print("height",height)
